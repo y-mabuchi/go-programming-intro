@@ -1,0 +1,21 @@
+version: '3'
+services:
+  db:
+    build:
+      context: .
+      dockerfile: ./docker/postgres/Dockerfile
+    environment:
+      - POSTGRES_USER=chitchat_user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=chitchat
+  app:
+    depends_on:
+      - db
+    build:
+      context: .
+      dockerfile: ./docker/golang/Dockerfile
+    tty: true
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/go/src/work
