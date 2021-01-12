@@ -1,29 +1,43 @@
 package main
 
-import (
-	"html/template"
-	"math/rand"
-	"net/http"
-	"time"
-)
+import "fmt"
 
-func process(w http.ResponseWriter, r *http.Request) {
-	rand.Seed(time.Now().Unix())
-	var t *template.Template
-	if rand.Intn(10) > 5 {
-		t, _ = template.ParseFiles("./templates/layout.html", "./templates/red_hello.html")
-	} else {
-		t, _ = template.ParseFiles("./templates/layout.html", "./templates/blue_hello.html")
-	}
-	t.ExecuteTemplate(w, "layout", "")
+type Post struct {
+	Id      int
+	Content string
+	Author  string
+}
+
+var PostById map[int]*Post
+var PostsByAuthor map[string][]*Post
+
+func store(post Post) {
+	PostById[post.Id] = &post
+	PostsByAuthor[post.Author] = append(PostsByAuthor[post.Author], &post)
 }
 
 func main() {
-	server := http.Server{
-		Addr: "0.0.0.0:8080",
+	PostById = make(map[int]*Post)
+	PostsByAuthor = make(map[string][]*Post)
+
+	post1 := Post{Id: 1, Content: "Hello World!", Author: "Yusuke Mabuchi"}
+	post2 := Post{Id: 2, Content: "Bonjour Monde!", Author: "Pierre"}
+	post3 := Post{Id: 3, Content: "Hola Mundo!", Author: "Pedro"}
+	post4 := Post{Id: 4, Content: "Greetings Earthlings!", Author: "Yusuke Mabuchi"}
+
+	store(post1)
+	store(post2)
+	store(post3)
+	store(post4)
+
+	fmt.Println(PostById[1])
+	fmt.Println(PostById[2])
+
+	for _, post := range PostsByAuthor["Yusuke Mabuchi"] {
+		fmt.Println(post)
 	}
 
-	http.HandleFunc("/process", process)
-
-	server.ListenAndServe()
+	for _, post := range PostsByAuthor["Pedro"] {
+		fmt.Println(post)
+	}
 }
