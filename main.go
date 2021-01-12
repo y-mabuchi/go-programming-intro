@@ -1,43 +1,31 @@
 package main
 
-import "fmt"
-
-type Post struct {
-	Id      int
-	Content string
-	Author  string
-}
-
-var PostById map[int]*Post
-var PostsByAuthor map[string][]*Post
-
-func store(post Post) {
-	PostById[post.Id] = &post
-	PostsByAuthor[post.Author] = append(PostsByAuthor[post.Author], &post)
-}
+import (
+	"fmt"
+	"io/ioutil"
+	"os"
+)
 
 func main() {
-	PostById = make(map[int]*Post)
-	PostsByAuthor = make(map[string][]*Post)
-
-	post1 := Post{Id: 1, Content: "Hello World!", Author: "Yusuke Mabuchi"}
-	post2 := Post{Id: 2, Content: "Bonjour Monde!", Author: "Pierre"}
-	post3 := Post{Id: 3, Content: "Hola Mundo!", Author: "Pedro"}
-	post4 := Post{Id: 4, Content: "Greetings Earthlings!", Author: "Yusuke Mabuchi"}
-
-	store(post1)
-	store(post2)
-	store(post3)
-	store(post4)
-
-	fmt.Println(PostById[1])
-	fmt.Println(PostById[2])
-
-	for _, post := range PostsByAuthor["Yusuke Mabuchi"] {
-		fmt.Println(post)
+	data := []byte("Hello World!\n")
+	err := ioutil.WriteFile("data1", data, 0644)
+	if err != nil {
+		panic(err)
 	}
+	read1, _ := ioutil.ReadFile("data1")
+	fmt.Println(string(read1))
 
-	for _, post := range PostsByAuthor["Pedro"] {
-		fmt.Println(post)
-	}
+	file1, _ := os.Create("data2")
+	defer file1.Close()
+
+	bytes, _ := file1.Write(data)
+	fmt.Printf("Wrote %d bytes to file\n", bytes)
+
+	file2, _ := os.Open("data2")
+	defer file2.Close()
+
+	read2 := make([]byte, len(data))
+	bytes, _ = file2.Read(read2)
+	fmt.Printf("Read %d bytes from file\n", bytes)
+	fmt.Println(string(read2))
 }
