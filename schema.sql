@@ -32,3 +32,9 @@ create table posts (
     created_at timestamp not null
 );
 
+create table posts2 (
+    id serial primary key,
+    content text,
+    author varchar(255)
+);
+
