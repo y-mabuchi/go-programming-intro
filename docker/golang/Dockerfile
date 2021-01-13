@@ -8,6 +8,7 @@ ADD . .
 
 RUN go get github.com/julienschmidt/httprouter \
     && go get github.com/oxequa/realize \
-    && go get golang.org/x/net/http2
+    && go get golang.org/x/net/http2 \
+    && go get github.com/lib/pq
 
 CMD [ "realize", "start", "--run" ]
