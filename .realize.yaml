@@ -4,14 +4,10 @@ settings:
     interval: 0s
 schema:
   - name: chitchat
-    path: src/chitchat
+    path: .
     commands:
-      build:
-        status: true
-        method: go build -o /go/bin/api
       run:
         status: true
-        method: /go/bin/api
     watcher:
       extensions:
         - go
